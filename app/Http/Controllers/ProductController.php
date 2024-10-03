@@ -76,15 +76,13 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($id, ProductService $service)
     {
-        $product = TblProduct::find($id);
-
-        if (!$product) {
-            return response()->json(['error' => 'Product not found'], 404);
+        try {
+            $service->delete($id);
+        } catch (\Exception $ex) {
+            return response()->json(['message' => $ex->getMessage()], $ex->getCode());
         }
-
-        $product->delete();
 
         return response()->json(['message' => 'Product deleted successfully'], 200);
     }

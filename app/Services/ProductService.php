@@ -13,7 +13,7 @@ class ProductService
 
     public function findById($id)
     {
-        $product =  TblProduct::find($id);
+        $product = TblProduct::find($id);
         return $product;
     }
     public function create(Request $request)
@@ -46,6 +46,17 @@ class ProductService
         ]);
 
         return $product;
+    }
+
+    public function delete($id)
+    {
+        $product = TblProduct::find($id);
+
+        if (!$product) {
+            throw new \Exception('Product not found', 404);
+        }
+
+        $product->delete();
     }
 
     private function validateRequest(Request $request)
