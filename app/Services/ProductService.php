@@ -18,6 +18,25 @@ class ProductService
         return $product;
     }
 
+    public function update($id, Request $request){
+        $product = TblProduct::find($id);
+
+        if (!$product) {
+            throw new \Exception('Product not found', 404);
+        }
+
+        $this->validateRequest($request);
+
+        $product->update([
+            'name' => $request->name,
+            'description' => $request->description,
+            'price' => $request->price,
+            'stock_quantity' => $request->stock_quantity,
+        ]);
+
+        return $product;
+    }
+
     private function validateRequest(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -27,7 +46,7 @@ class ProductService
             'stock_quantity' => 'required|integer|min:0',
         ]);
         if ($validator->fails()) {
-            throw new \Exception($validator->errors());
+            throw new \Exception($validator->errors(), 400);
         }
     }
 }

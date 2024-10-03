@@ -30,7 +30,7 @@ class ProductController extends Controller
         try {
             $product = $service->create($request);
         } catch (\Exception $ex) {
-            return response()->json(['message' => "Hubo un problema al crear el producto", 'errors' => $ex->getMessage()], 400);
+            return response()->json(['message' => $ex->getMessage()], 400);
         }
 
         return response()->json($product, 201);
@@ -59,25 +59,13 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $id, ProductService $service)
     {
-        $product = TblProduct::find($id);
-
-        if (!$product) {
-            return response()->json(['error' => 'Product not found'], 404);
+        try {
+            $product = $service->update($id, $request);
+        } catch (\Exception $ex) {
+            return response()->json(['message' => $ex->getMessage()], $ex->getCode());
         }
-
-        $validatedData = $this->validateRequest($request);
-        if ($validatedData['failed']) {
-            return response()->json($validatedData['response'], 400);
-        }
-
-        $product->update([
-            'name' => $request->name,
-            'description' => $request->description,
-            'price' => $request->price,
-            'stock_quantity' => $request->stock_quantity,
-        ]);
 
         return response()->json($product, 200);
     }
