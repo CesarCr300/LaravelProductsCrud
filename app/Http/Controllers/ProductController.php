@@ -14,9 +14,9 @@ class ProductController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(ProductService $service)
     {
-        return response()->json(TblProduct::all(), 200);
+        return response()->json($service->find(), 200);
     }
 
     /**
