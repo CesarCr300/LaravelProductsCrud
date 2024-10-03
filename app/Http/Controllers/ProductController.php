@@ -25,7 +25,15 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'price' => 'required|numeric|gt:0',
+            'stock_quantity' => 'required|integer|min:0',
+        ]);
+        $producto = TblProduct::create($validatedData);
+        
+        return response()->json($producto, 201);
     }
 
     /**
