@@ -16,7 +16,7 @@ class ProductController extends Controller
      */
     public function index(ProductService $service)
     {
-        return response()->json($service->find(), 200);
+        return response()->json($service->findAll(), 200);
     }
 
     /**
@@ -42,9 +42,9 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($id, ProductService $service)
     {
-        $product = TblProduct::find($id);
+        $product = $service->findById($id);
 
         if ($product) {
             return response()->json($product, 200);

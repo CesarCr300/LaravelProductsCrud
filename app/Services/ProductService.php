@@ -6,6 +6,16 @@ use Validator;
 
 class ProductService
 {
+    public function findAll()
+    {
+        return TblProduct::all();
+    }
+
+    public function findById($id)
+    {
+        $product =  TblProduct::find($id);
+        return $product;
+    }
     public function create(Request $request)
     {
         $this->validateRequest($request);
@@ -18,7 +28,8 @@ class ProductService
         return $product;
     }
 
-    public function update($id, Request $request){
+    public function update($id, Request $request)
+    {
         $product = TblProduct::find($id);
 
         if (!$product) {
