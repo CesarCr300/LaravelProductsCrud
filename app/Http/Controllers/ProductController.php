@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\ProductService;
 use Illuminate\Http\Request;
 use App\Models\TblProduct;
 use Validator;
@@ -24,20 +25,15 @@ class ProductController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, ProductService $service)
     {
-        $validatedData = $this->validateRequest($request);
-        if ($validatedData['failed']) {
-            return response()->json($validatedData['response'], 400);
+        try {
+            $product = $service->create($request->all());
+        } catch (\Exception $ex) {
+            return response()->json(['message' => "Hubo un problema al crear el producto", 'errors' => $ex->getMessage()], 400);
         }
-        $producto = TblProduct::create([
-            'name' => $request->name,
-            'description' => $request->description,
-            'price' => $request->price,
-            'stock_quantity' => $request->stock_quantity,
-        ]);
 
-        return response()->json($producto, 201);
+        return response()->json($product, 201);
     }
 
     /**
