@@ -32,19 +32,24 @@ class ProductController extends Controller
             'stock_quantity' => 'required|integer|min:0',
         ]);
         $producto = TblProduct::create($validatedData);
-        
+
         return response()->json($producto, 201);
     }
 
     /**
      * Display the specified resource.
-     *
+     *u
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
-        //
+        $product = TblProduct::find($id);
+
+        if ($product) {
+            return response()->json($product, 200);
+        }
+        return response()->json(['error' => 'Product not found'], 404);
     }
 
     /**
