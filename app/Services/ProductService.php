@@ -1,12 +1,12 @@
 <?php
 namespace App\Services;
 use App\Models\TblProduct;
-use Request;
+use Illuminate\Http\Request;
 use Validator;
 
 class ProductService
 {
-    public function create($request)
+    public function create(Request $request)
     {
         $this->validateRequest($request);
         $product = TblProduct::create([

@@ -28,7 +28,7 @@ class ProductController extends Controller
     public function store(Request $request, ProductService $service)
     {
         try {
-            $product = $service->create($request->all());
+            $product = $service->create($request);
         } catch (\Exception $ex) {
             return response()->json(['message' => "Hubo un problema al crear el producto", 'errors' => $ex->getMessage()], 400);
         }
