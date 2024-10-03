@@ -61,7 +61,22 @@ class ProductController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $product = TblProduct::find($id);
+
+        if (!$product) {
+            return response()->json(['error' => 'Product not found'], 404);
+        }
+
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'price' => 'required|numeric|gt:0',
+            'stock_quantity' => 'required|integer|min:0',
+        ]);
+
+        $product->update($validatedData);
+
+        return response()->json($product, 200);
     }
 
     /**
