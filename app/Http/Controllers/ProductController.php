@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\TblProduct;
+use Validator;
 
 class ProductController extends Controller
 {
@@ -25,13 +26,16 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'price' => 'required|numeric|gt:0',
-            'stock_quantity' => 'required|integer|min:0',
+        $validatedData = $this->validateRequest($request);
+        if ($validatedData['failed']) {
+            return response()->json($validatedData['response'], 400);
+        }
+        $producto = TblProduct::create([
+            'name' => $request->name,
+            'description' => $request->description,
+            'price' => $request->price,
+            'stock_quantity' => $request->stock_quantity,
         ]);
-        $producto = TblProduct::create($validatedData);
 
         return response()->json($producto, 201);
     }
@@ -67,14 +71,17 @@ class ProductController extends Controller
             return response()->json(['error' => 'Product not found'], 404);
         }
 
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'price' => 'required|numeric|gt:0',
-            'stock_quantity' => 'required|integer|min:0',
-        ]);
+        $validatedData = $this->validateRequest($request);
+        if ($validatedData['failed']) {
+            return response()->json($validatedData['response'], 400);
+        }
 
-        $product->update($validatedData);
+        $product->update([
+            'name' => $request->name,
+            'description' => $request->description,
+            'price' => $request->price,
+            'stock_quantity' => $request->stock_quantity,
+        ]);
 
         return response()->json($product, 200);
     }
@@ -96,5 +103,20 @@ class ProductController extends Controller
         $product->delete();
 
         return response()->json(['message' => 'Product deleted successfully'], 200);
+    }
+
+    private function validateRequest(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'price' => 'required|numeric|gt:0',
+            'stock_quantity' => 'required|integer|min:0',
+        ]);
+        if ($validator->fails()) {
+            return ['failed' => true, 'response' => ['message' => 'Los datos ingresados no son válidos', 'errors' => $validator->errors()]];
+        }
+
+        return ['failed' => false, 'response' => null,];
     }
 }
